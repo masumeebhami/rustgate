@@ -1,0 +1,1 @@
+std::ptr::Unique<(dyn HttpBody<Data = hyper::body::Bytes, Error = axum::Error> + Send + 'static)>
