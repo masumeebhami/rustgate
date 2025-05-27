@@ -1,8 +1,6 @@
+use axum::{routing::get, Router};
 use metrics_exporter_prometheus::PrometheusBuilder;
 use std::net::SocketAddr;
-use axum::{Router, routing::get};
-use hyper::server::conn::http1;
-use hyper_util::rt::TokioIo;
 use tokio::net::TcpListener;
 
 pub fn init() {
@@ -11,24 +9,11 @@ pub fn init() {
 
     tokio::spawn(async move {
         let addr = SocketAddr::from(([0, 0, 0, 0], 9090));
-        let app = Router::new().route(
-            "/metrics",
-            get(|| async move { handle.render() }),
-        );
+        let app = Router::new().route("/metrics", get(|| async move { handle.render() }));
 
         let listener = TcpListener::bind(addr).await.unwrap();
-        loop {
-            let (stream, _) = listener.accept().await.unwrap();
-            let app = app.clone();
+        tracing::info!("📊 Metrics server listening on http://{}", addr);
 
-            tokio::spawn(async move {
-                if let Err(err) = http1::Builder::new()
-                    .serve_connection(TokioIo::new(stream), app.into_make_service())
-                    .await
-                {
-                    eprintln!("Metrics server error: {:?}", err);
-                }
-            });
-        }
+        axum::serve(listener, app).await.unwrap();
     });
 }

@@ -1,5 +1,12 @@
-use axum::{http::{Request, StatusCode}, middleware::Next, response::Response, body::Body};
-use jsonwebtoken::{decode, DecodingKey, Validation, Algorithm, TokenData, errors::Error as JwtError};
+use axum::{
+    body::Body,
+    http::{Request, StatusCode},
+    middleware::Next,
+    response::Response,
+};
+use jsonwebtoken::{
+    Algorithm, DecodingKey, TokenData, Validation, decode, errors::Error as JwtError,
+};
 use serde::{Deserialize, Serialize};
 use tracing::{info, warn};
 
@@ -17,8 +24,12 @@ fn validate_token(token: &str) -> Result<TokenData<Claims>, JwtError> {
     )
 }
 
-pub async fn jwt_auth(req: Request<Body>, next: Next<>) -> Result<Response, StatusCode> {
-    if let Some(auth_header) = req.headers().get("Authorization").and_then(|v| v.to_str().ok()) {
+pub async fn jwt_auth(req: Request<Body>, next: Next) -> Result<Response, StatusCode> {
+    if let Some(auth_header) = req
+        .headers()
+        .get("Authorization")
+        .and_then(|v| v.to_str().ok())
+    {
         if let Some(token) = auth_header.strip_prefix("Bearer ") {
             match validate_token(token) {
                 Ok(data) => {

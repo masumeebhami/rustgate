@@ -9,7 +9,6 @@
 - 🔁 Reverse proxy with dynamic path-based routing
 - 🔐 JWT-based authentication middleware
 - 📊 Prometheus-compatible metrics at `/metrics`
-- 🛡️ Rate limiting via `tower-governor` (optional)
 - ⚙️ Configuration via `TOML` file
 - ⚡ Built on async Rust (Tokio + Hyper 1.6)
 
@@ -36,7 +35,7 @@ This project includes a [`justfile`](https://github.com/casey/just) to simplify 
 
 ### Usage
 Install `just` (if not already installed):
-```bash
+
 cargo install just
 ```
 
