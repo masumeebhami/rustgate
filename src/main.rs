@@ -15,20 +15,32 @@ async fn main() {
         .with_max_level(tracing::Level::INFO)
         .init();
 
-    // Setup metrics and config
+    // Start metrics server
     metrics::init();
-    let settings = config::load();
 
-    // Build Axum app
-    let app = router::create_router(settings)
+    // Load configuration
+    let settings = config::load();
+    tracing::info!("✅ Loaded config: {:?}", settings);
+
+    // Build the Axum app
+    let app = router::create_router(settings.clone())
         .layer(TraceLayer::new_for_http());
 
-    // Bind TCP listener
-    let addr: SocketAddr = "0.0.0.0:8080".parse().unwrap();
-    let listener = TcpListener::bind(addr).await.unwrap();
+    // Construct bind address from config
+    let addr: SocketAddr = format!(
+        "{}:{}",
+        settings.server.address,
+        settings.server.port
+    )
+        .parse()
+        .expect("Invalid address in config");
+
+    let listener = TcpListener::bind(addr).await.expect("Failed to bind address");
 
     tracing::info!("🚀 RustGate listening on http://{}", addr);
 
-    // Start server using Axum's `serve`
-    axum::serve(listener, app).await.unwrap();
+    // Start the Axum server
+    axum::serve(listener, app)
+        .await
+        .expect("Failed to start server");
 }

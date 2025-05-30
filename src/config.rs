@@ -3,7 +3,14 @@ use serde::Deserialize;
 use std::collections::HashMap;
 
 #[derive(Clone, Debug, Deserialize)]
+pub struct ServerConfig {
+    pub address: String,
+    pub port: u16,
+}
+
+#[derive(Clone, Debug, Deserialize)]
 pub struct Settings {
+    pub server: ServerConfig,
     pub services: HashMap<String, String>,
 }
 

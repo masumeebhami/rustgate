@@ -2,11 +2,11 @@ use crate::auth::jwt_auth;
 use crate::config::Settings;
 
 use axum::{
-    body::{Body},
+    body::Body,
     extract::Path,
-    http::{StatusCode},
+    http::StatusCode,
     middleware,
-    response::{Response},
+    response::Response,
     routing::get,
     Router,
 };
@@ -14,18 +14,21 @@ use reqwest::Client;
 use tower_http::trace::TraceLayer;
 
 pub fn create_router(settings: Settings) -> Router {
+    // Wrap settings in an Axum state layer
     Router::new()
+        .route("/", get(|| async { "✅ RustGate is running." }))
         .route(
             "/api/{service}/{path..}",
-            get(move |path| proxy_handler(path, settings.clone())),
+            get(proxy_handler),
         )
         .route_layer(middleware::from_fn(jwt_auth))
         .layer(TraceLayer::new_for_http())
+        .with_state(settings)
 }
 
 async fn proxy_handler(
     Path((service, path)): Path<(String, String)>,
-    settings: Settings,
+    axum::extract::State(settings): axum::extract::State<Settings>,
 ) -> Response<Body> {
     let client = Client::new();
 
