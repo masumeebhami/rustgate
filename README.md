@@ -1,6 +1,6 @@
 # 🚀 RustGate – A Lightweight API Gateway in Rust
 
-**RustGate** is a high-performance, secure, and extensible API gateway written in Rust, using [Axum](https://docs.rs/axum), [Tower](https://docs.rs/tower), and [Hyper 1.6](https://docs.rs/hyper/latest/hyper/). It routes HTTP traffic to microservices with built-in support for JWT authentication, Prometheus metrics, and dynamic service configuration.
+**RustGate** is a high-performance, secure, and extensible API gateway written in Rust, using [Axum](https://docs.rs/axum), [Tower](https://docs.rs/tower). It routes HTTP traffic to microservices with built-in support for JWT authentication, Prometheus metrics, and dynamic service configuration.
 
 ---
 
